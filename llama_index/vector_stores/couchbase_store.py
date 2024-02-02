@@ -138,7 +138,7 @@ class CouchbaseVectorStore(VectorStore):
 
         batch_size = kwargs.get("batch_size", DEFAULT_BATCH_SIZE)
         documents_to_insert = []
-        doc_ids = List[str]
+        doc_ids = []  # type: ignore
 
         for node in nodes:
             metadata = node_to_metadata_dict(
@@ -166,7 +166,7 @@ class CouchbaseVectorStore(VectorStore):
                 # upsert the batch of documents into the collection
                 result = self._collection.upsert_multi(insert_batch)
                 if result.all_ok:
-                    doc_ids.extend(batch[0].keys())  # type: ignore
+                    doc_ids.extend(insert_batch.keys())  # type: ignore
             except DocumentExistsException as e:
                 raise ValueError(f"Document already exists: {e}")
         return doc_ids  # type: ignore
